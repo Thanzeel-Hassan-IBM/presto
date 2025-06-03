@@ -40,7 +40,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.fail;
 
-@Test(singleThreaded = true)
 public class TestNativeSidecarPlugin
         extends AbstractTestQueryFramework
 {
@@ -62,7 +61,10 @@ public class TestNativeSidecarPlugin
     protected QueryRunner createQueryRunner()
             throws Exception
     {
-        DistributedQueryRunner queryRunner = (DistributedQueryRunner) PrestoNativeQueryRunnerUtils.createQueryRunner(true, true, false, false);
+        DistributedQueryRunner queryRunner = (DistributedQueryRunner) PrestoNativeQueryRunnerUtils.nativeHiveQueryRunnerBuilder()
+                .setAddStorageFormatToPath(true)
+                .setCoordinatorSidecarEnabled(true)
+                .build();
         setupNativeSidecarPlugin(queryRunner);
         return queryRunner;
     }
@@ -71,7 +73,9 @@ public class TestNativeSidecarPlugin
     protected QueryRunner createExpectedQueryRunner()
             throws Exception
     {
-        return PrestoNativeQueryRunnerUtils.createJavaQueryRunner();
+        return PrestoNativeQueryRunnerUtils.javaHiveQueryRunnerBuilder()
+                .setAddStorageFormatToPath(true)
+                .build();
     }
 
     @Test
